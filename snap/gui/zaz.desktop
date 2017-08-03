@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zaz
+Comment=Zaz ain't Z***
+Comment[ru]=Zaz не клон Z***
+Comment[tr]=Top Yok Etme Oyunu
+Comment[de]=Zaz ist nicht Z***
+TryExec=zaz-jz.zaz
+Exec=zaz-jz.zaz
+Categories=Game;LogicGame;
+Icon=${SNAP}/meta/gui/zaz.xpm
+Keywords=puzzle;logic;3D;

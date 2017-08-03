@@ -1,0 +1,56 @@
+name: zaz-jz
+version: '1.0.0-0'
+summary: Zaz - Because hackers too need to play with balls!
+description: |
+  Zaz is a game where the player has to get rid of incoming balls by arranging
+  them in triplets. The idea of the game is loosely based on games like Luxor,
+  Zuma and Puzzle Bobble. The twists that make Zaz stand out from other games of
+  this type are that the balls have to be picked from the path (insted of being
+  randomly assigned for the player) and that the player's "vehicle" is also
+  attached to a path which is different from level to level.
+
+grade: stable
+confinement: strict
+
+apps:
+  zaz:
+    command: opengl-launch zaz -d $SNAP/share/zaz
+    plugs: [x11, opengl, pulseaudio]
+
+parts:
+  zaz:
+    source: https://downloads.sourceforge.net/project/zaz/zaz-1.0.0.tar.bz2
+    plugin: autotools
+    configflags:
+      - --mandir=/noinst
+      - --infodir=/noinst
+    build-packages:
+      - fonts-freefont-ttf
+      - gettext
+      - libftgl-dev
+      - libgl1-mesa-dev
+      - libglu1-mesa-dev
+      - libsdl-image1.2-dev
+      - libsdl1.2-dev
+      - libtheora-dev
+      - libvorbis-dev
+      - libxext-dev
+      - pkg-config
+    stage-packages:
+      - libgl1-mesa-dri
+    prime:
+      - -noinst
+      - -share/applications
+      - -share/doc
+      - -usr/share/doc
+      - -usr/share/lintian
+    prepare: |
+      patch -p1 < ../../../libvorbis.patch
+    install: |
+      strip $SNAPCRAFT_PART_INSTALL/bin/zaz
+
+  opengl-launch:
+    plugin: dump
+    source: .
+    organize:
+      opengl-launch: bin/

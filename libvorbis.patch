@@ -1,0 +1,27 @@
+Description: Link with libvorbis, too.
+ This is fallout from the fact that other libraries in Debian, such as
+ libvorbisfile, no longer include their own dependencies in the pkg-config
+ output.  Until now, zaz built just fine because -lvorbis was added by
+ other libraries; now it has to add it on its own.
+ .
+ This bug should really be fixed upstream by adding an explicit check for
+ libvorbis in configure.ac, something like
+ AC_CHECK_LIB([vorbis], [vorbis_bitrate_addblock])
+ I do intend to do that in a future upload, but IMHO this minimal patch
+ ought to be suitable for the Jessie freeze.
+Debian-Bug: https://bugs.debian.org/768718
+Author: Peter Pentchev <roam@ringlet.net>
+Forwarded: not-yet
+Last-Update: 2014-11-10
+
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -273,7 +273,7 @@
+ 	splash.cpp 
+ 
+ zaz_LDFLAGS = 
+-zaz_LDADD = $(ZAZ_LIBS) $(FTGL_LIBS) $(GL_LIBS) @LIBINTL@
++zaz_LDADD = $(ZAZ_LIBS) -lvorbis $(FTGL_LIBS) $(GL_LIBS) @LIBINTL@
+ all: all-am
+ 
+ .SUFFIXES:
