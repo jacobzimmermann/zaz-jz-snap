@@ -9,5 +9,5 @@ Comment[de]=Zaz ist nicht Z***
 TryExec=zaz-jz.zaz
 Exec=zaz-jz.zaz
 Categories=Game;LogicGame;
-Icon=${SNAP}/meta/gui/zaz.xpm
+Icon=${SNAP}/meta/gui/zaz.png
 Keywords=puzzle;logic;3D;

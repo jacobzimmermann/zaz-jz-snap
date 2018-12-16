@@ -1,5 +1,5 @@
 name: zaz-jz
-version: '1.0.0-0'
+version: '1.0.0'
 summary: Zaz - Because hackers too need to play with balls!
 description: |
   Zaz is a game where the player has to get rid of incoming balls by arranging
@@ -11,16 +11,25 @@ description: |
 
 grade: stable
 confinement: strict
+base: core18
+
+# Provides opengl
+plugs:
+  gnome-3-28-1804:
+    interface: content
+    target: $SNAP/gnome-platform
+    default-provider: gnome-3-28-1804
 
 apps:
   zaz:
-    command: opengl-launch zaz -d $SNAP/share/zaz
-    plugs: [x11, opengl, pulseaudio]
+    command: desktop-launch zaz -d $SNAP/share/zaz
+    plugs: [desktop, desktop-legacy, x11, wayland, opengl, pulseaudio]
 
 parts:
   zaz:
     source: https://downloads.sourceforge.net/project/zaz/zaz-1.0.0.tar.bz2
     plugin: autotools
+    after: [desktop-gnome-platform]
     configflags:
       - --mandir=/noinst
       - --infodir=/noinst
@@ -37,20 +46,37 @@ parts:
       - libxext-dev
       - pkg-config
     stage-packages:
-      - libgl1-mesa-dri
+      - libsdl1.2debian
+      - libtheora0
+      - libftgl2
+      - libsdl-image1.2
+      - libslang2
+      - libvorbisfile3
     prime:
       - -noinst
       - -share/applications
       - -share/doc
       - -usr/share/doc
       - -usr/share/lintian
-    prepare: |
-      patch -p1 < ../../../libvorbis.patch
-    install: |
+    override-build: |
+      patch -p1 < $SNAPCRAFT_STAGE/../project/patches/libvorbis.patch
+      snapcraftctl build
       strip $SNAPCRAFT_PART_INSTALL/bin/zaz
 
-  opengl-launch:
-    plugin: dump
-    source: .
-    organize:
-      opengl-launch: bin/
+  desktop-gnome-platform:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: gtk
+    plugin: make
+    make-parameters: ["FLAVOR=gtk3"]
+    build-packages:
+      - build-essential
+      - libgtk-3-dev
+    override-build: |
+      snapcraftctl build
+      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
+
+  # workaround snapcraft trying to outsmart us by copying ldd listed libraries
+  workaround:
+    plugin: nil
+    prime:
+      - "-*"
